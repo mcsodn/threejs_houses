@@ -18,6 +18,14 @@
   },
   "homepage": "https://github.com/mcsodn/threejs_learning#readme",
   "devDependencies": {
-    "gulp": "^3.9.1"
+    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-autoprefixer": "^5.0.0",
+    "gulp-csso": "^3.0.1",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-notify": "^3.2.0",
+    "gulp-pug": "^4.0.1",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-stylus": "^2.7.0",
+    "three": "^0.94.0"
   }
 }
