@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/mcsodn/threejs_learning/issues"
   },
-  "homepage": "https://github.com/mcsodn/threejs_learning#readme"
+  "homepage": "https://github.com/mcsodn/threejs_learning#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
 }
