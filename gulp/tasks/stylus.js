@@ -13,6 +13,7 @@ module.exports = function () {
             }))
             .pipe($.gulpPlugins.csso())
             .pipe($.gulpPlugins.sourcemaps.write())
-            .pipe($.gulp.dest('build/static/css/'));
+            .pipe($.gulp.dest('build/static/css/'))
+            .on('end', $.browserSync.reload);
     });
 }
