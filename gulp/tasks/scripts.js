@@ -10,8 +10,9 @@ module.exports = function () {
     });
 
     $.gulp.task('scripts',function () {
-        return $.gulp.src(['src/static/js/main.js'])
+        return $.gulp.src(['src/static/js/main.js','src/static/js/three/three_main.js'])
 
+            .pipe($.gulpPlugins.concat('main.min.js'))
             .pipe($.gulp.dest('build/static/js/'))
             .pipe($.browserSync.reload({
                 stream: true
