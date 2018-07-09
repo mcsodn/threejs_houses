@@ -9,12 +9,12 @@ $(function () {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    var spotLight = new THREE.SpotLight( 0xffffff );
+    var spotLight = new THREE.SpotLight(0xffffff);
     spotLight.position.set( -40, 60, -10 );
     spotLight.castShadow = true;
 
-    spotLight.shadow.mapSize.width = 8192;
-    spotLight.shadow.mapSize.height = 8192;
+    spotLight.shadow.mapSize.width = 512*16;
+    spotLight.shadow.mapSize.height = 512*16;
     spotLight.shadow.camera.near = 0.5;
     spotLight.shadow.camera.far = 500;
 
