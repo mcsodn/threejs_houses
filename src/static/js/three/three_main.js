@@ -13,7 +13,7 @@ $(function () {
     // Trackball controller
     controls.enableDamping = true;
     controls.dampingFactor = 0.25;
-    controls.enableZoom = false;
+
 
     //Lighting
     let spotLight = new THREE.SpotLight(0xffffff);
@@ -31,42 +31,67 @@ $(function () {
     let axes = new THREE.AxesHelper(20);
     scene.add(axes);
 
+    // var phone;
+    //
+    // // loading manager
+    // var loadingManager = new THREE.LoadingManager( function() {
+    //     scene.add( phone );
+    // } );
+    // // collada
+    // var loader = new THREE.ColladaLoader( loadingManager );
+    // loader.load( 'static/models/ballmodel.dae', function ( collada ) {
+    //     phone = collada.scene;
+    //
+    // } );
+
+    var ball;
+    var loaderColladaBall = new THREE.ColladaLoader();
+
+    function loadCollada (collada) {
+        ball = collada.scene;
+        scene.add(ball);
+    }
+
+    loaderColladaBall.load('static/models/ballmodel.dae',loadCollada);
+
+
     //add ground
-    let planeGeometry = new THREE.PlaneGeometry(60, 20, 1, 1);
+    let planeGeometry = new THREE.PlaneGeometry(20, 20, 1, 1);
     let planeMaterial = new THREE.MeshLambertMaterial(
         {color: 0xffffff});
     let plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
-    plane.rotation.x = -0.5 * Math.PI;
-    plane.position.x = 15;
+     plane.rotation.x = -0.5 * Math.PI;
+    // plane.position.x = 15;
+    plane.position.x = 0;
     plane.position.y = 0;
     plane.position.z = 0;
     plane.receiveShadow = true;
     scene.add(plane);
 
     //add cube
-    let cubeGeometry = new THREE.CubeGeometry(4, 4, 4);
-    let cubeMaterial = new THREE.MeshLambertMaterial(
-        {color: 0xff0000});
-    let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    cube.position.x = -4;
-    cube.position.y = 3;
-    cube.position.z = 0;
-    cube.castShadow = true;
-    cube.receiveShadow = false;
-    scene.add(cube);
-
-    //add sphere
-    let sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
-    let sphereMaterial = new THREE.MeshLambertMaterial(
-        {color: 0x7777ff});
-    let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    sphere.position.x = 20;
-    sphere.position.y = 4;
-    sphere.position.z = 2;
-    sphere.castShadow = true;
-    sphere.receiveShadow = false;
-    scene.add(sphere);
+    // let cubeGeometry = new THREE.CubeGeometry(4, 4, 4);
+    // let cubeMaterial = new THREE.MeshLambertMaterial(
+    //     {color: 0xff0000});
+    // let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    // cube.position.x = -4;
+    // cube.position.y = 3;
+    // cube.position.z = 0;
+    // cube.castShadow = true;
+    // cube.receiveShadow = false;
+    // scene.add(cube);
+    //
+    // //add sphere
+    // let sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
+    // let sphereMaterial = new THREE.MeshLambertMaterial(
+    //     {color: 0x7777ff});
+    // let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    // sphere.position.x = 20;
+    // sphere.position.y = 4;
+    // sphere.position.z = 2;
+    // sphere.castShadow = true;
+    // sphere.receiveShadow = false;
+    // scene.add(sphere);
 
     //add camera
     camera.position.x = -30;
