@@ -1,32 +1,41 @@
 $(function () {
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(45
-        , window.innerWidth / window.innerHeight, 0.1, 1000);
-    var renderer = new THREE.WebGLRenderer();
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    let renderer = new THREE.WebGLRenderer({ alpha: true });
+    let controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-    renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+    //renderer params
+    renderer.setClearColor(new THREE.Color("rgb(153, 153, 255)"), 0.5);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    var spotLight = new THREE.SpotLight(0xffffff);
+    // Trackball controller
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.25;
+    controls.enableZoom = false;
+
+    //Lighting
+    let spotLight = new THREE.SpotLight(0xffffff);
     spotLight.position.set( -40, 60, -10 );
     spotLight.castShadow = true;
 
-    spotLight.shadow.mapSize.width = 512*16;
-    spotLight.shadow.mapSize.height = 512*16;
+    spotLight.shadow.mapSize.width = 512*4;
+    spotLight.shadow.mapSize.height = 512*4;
     spotLight.shadow.camera.near = 0.5;
     spotLight.shadow.camera.far = 500;
 
     scene.add(spotLight);
 
-    var axes = new THREE.AxisHelper(20);
+    //Add axes
+    let axes = new THREE.AxesHelper(20);
     scene.add(axes);
 
-    var planeGeometry = new THREE.PlaneGeometry(60, 20, 1, 1);
-    var planeMaterial = new THREE.MeshLambertMaterial(
+    //add ground
+    let planeGeometry = new THREE.PlaneGeometry(60, 20, 1, 1);
+    let planeMaterial = new THREE.MeshLambertMaterial(
         {color: 0xffffff});
-    var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    let plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
     plane.rotation.x = -0.5 * Math.PI;
     plane.position.x = 15;
@@ -35,10 +44,11 @@ $(function () {
     plane.receiveShadow = true;
     scene.add(plane);
 
-    var cubeGeometry = new THREE.CubeGeometry(4, 4, 4);
-    var cubeMaterial = new THREE.MeshLambertMaterial(
+    //add cube
+    let cubeGeometry = new THREE.CubeGeometry(4, 4, 4);
+    let cubeMaterial = new THREE.MeshLambertMaterial(
         {color: 0xff0000});
-    var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     cube.position.x = -4;
     cube.position.y = 3;
     cube.position.z = 0;
@@ -46,10 +56,11 @@ $(function () {
     cube.receiveShadow = false;
     scene.add(cube);
 
-    var sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
-    var sphereMaterial = new THREE.MeshLambertMaterial(
+    //add sphere
+    let sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
+    let sphereMaterial = new THREE.MeshLambertMaterial(
         {color: 0x7777ff});
-    var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
     sphere.position.x = 20;
     sphere.position.y = 4;
     sphere.position.z = 2;
@@ -57,26 +68,29 @@ $(function () {
     sphere.receiveShadow = false;
     scene.add(sphere);
 
+    //add camera
     camera.position.x = -30;
     camera.position.y = 40;
     camera.position.z = 30;
     camera.lookAt(scene.position);
 
+    //output to DOM
     $("#WebGL-output").append(renderer.domElement);
     renderScene();
 
-    var step = 0;
 
     function renderScene() {
-        cube.rotation.x += 0.02;
-        cube.rotation.y += 0.02;
-        cube.rotation.z += 0.02;
-
-        step+=0.05;
-        sphere.position.x = 20+( 10*(Math.cos(step)));
-        sphere.position.y = 2 +( 10*Math.abs(Math.sin(step)));
-
         requestAnimationFrame(renderScene);
         renderer.render(scene, camera);
+        controls.update();
+    }
+
+    window.addEventListener( 'resize', onWindowResize, false );
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        renderScene();
     }
 });
