@@ -24,6 +24,7 @@ $(function () {
     spotLight.shadow.mapSize.height = 512*4;
     spotLight.shadow.camera.near = 0.5;
     spotLight.shadow.camera.far = 500;
+    spotLight.shadow.bias = -0.01;
 
     scene.add(spotLight);
 
@@ -31,27 +32,19 @@ $(function () {
     let axes = new THREE.AxesHelper(20);
     scene.add(axes);
 
-    // var phone;
-    //
-    // // loading manager
-    // var loadingManager = new THREE.LoadingManager( function() {
-    //     scene.add( phone );
-    // } );
-    // // collada
-    // var loader = new THREE.ColladaLoader( loadingManager );
-    // loader.load( 'static/models/ballmodel.dae', function ( collada ) {
-    //     phone = collada.scene;
-    //
-    // } );
-
-    var ball;
-    var loaderColladaBall = new THREE.ColladaLoader();
-
+    //add ball
     function loadCollada (collada) {
-        ball = collada.scene;
+        let ball = collada.scene;
+
+        ball.traverse(function(child) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+        });
+
         scene.add(ball);
     }
 
+    let loaderColladaBall = new THREE.ColladaLoader();
     loaderColladaBall.load('static/models/ballmodel.dae',loadCollada);
 
 
