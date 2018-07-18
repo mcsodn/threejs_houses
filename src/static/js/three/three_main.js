@@ -36,10 +36,12 @@ $(function () {
     function loadCollada (collada) {
         let ball = collada.scene;
 
-        ball.traverse(function(child) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-        });
+        //add ball's shadow
+        //не побеждена проблема тени самой на себя
+        // ball.traverse(function(child) {
+        //     child.castShadow = true;
+        //     child.receiveShadow = true;
+        // });
 
         scene.add(ball);
     }
