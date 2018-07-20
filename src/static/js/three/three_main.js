@@ -7,8 +7,11 @@ var HEIGHT, WIDTH;
 //создаем сцену
 
 function createScene() {
-    HEIGHT = window.innerHeight;
-    WIDTH = window.innerWidth;
+    HEIGHT = window.clientHeight;
+    WIDTH = window.clientWidth;
+
+    // console.log();
+    // console.log(WIDTH);
 
     scene = new THREE.Scene();
     aspectRatio = WIDTH/HEIGHT;
@@ -47,14 +50,14 @@ function createScene() {
     container = document.getElementById('WebGL-output');
     container.appendChild(renderer.domElement);
 
-    window.addEventListener('resize', handleWindowResize,false);
+    window.addEventListener('resize', handleWindowResize, false);
 }
 
 //функция перерисовывает сцену, если изменились размеры окна
 
 function handleWindowResize() {
-    HEIGHT = window.innerHeight;
-    WIDTH = window.innerWidth;
+    HEIGHT = window.clientHeight;
+    WIDTH = window.clientWidth;
     renderer.setSize(HEIGHT,WIDTH);
     camera.aspect = WIDTH/HEIGHT;
     camera.updateProjectionMatrix();
