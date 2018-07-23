@@ -7,11 +7,8 @@ var HEIGHT, WIDTH;
 //создаем сцену
 
 function createScene() {
-    HEIGHT = window.clientHeight;
-    WIDTH = window.clientWidth;
-
-    // console.log();
-    // console.log(WIDTH);
+    HEIGHT = window.innerHeight-20;
+    WIDTH = window.innerWidth-20;
 
     scene = new THREE.Scene();
     aspectRatio = WIDTH/HEIGHT;
@@ -56,8 +53,8 @@ function createScene() {
 //функция перерисовывает сцену, если изменились размеры окна
 
 function handleWindowResize() {
-    HEIGHT = window.clientHeight;
-    WIDTH = window.clientWidth;
+    HEIGHT = window.innerHeight-20;
+    WIDTH = window.innerWidth-20;
     renderer.setSize(HEIGHT,WIDTH);
     camera.aspect = WIDTH/HEIGHT;
     camera.updateProjectionMatrix();
@@ -82,20 +79,26 @@ function createLights() {
 }
 
 
-Planet = function () {
-    var geometry = new THREE.SphereGeometry(8, 20, 20);
-    var material = new THREE.MeshLambertMaterial(
-         {color: 0x7777ff});
+Planet = function (radius) {
+    var geometry = new THREE.SphereGeometry(radius, 32, 32);
+    // var material = new THREE.MeshLambertMaterial(
+    //      {color: 0x7777ff});
+    var texture = new THREE.TextureLoader().load('static/img/earth.jpg');
+    var material = new THREE.MeshBasicMaterial({ map:texture });
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.receiveShadow = true;
 }
 
-function createPlanet() {
-    var planet = new Planet();
+var planet;
+
+function createPlanet(radius) {
+    planet = new Planet(radius);
     scene.add(planet.mesh);
 }
 
 function loop() {
+    planet.mesh.rotation.y += .005;
+
     renderer.render(scene, camera);
     requestAnimationFrame(loop);
 }
@@ -103,7 +106,7 @@ function loop() {
 function init() {
     createScene();
     createLights();
-    createPlanet();
+    createPlanet(10);
     loop();
 }
 
