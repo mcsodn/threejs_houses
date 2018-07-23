@@ -85,7 +85,7 @@ Planet = function (radius) {
 
     //добавление текстуры
     var texture = new THREE.TextureLoader().load('static/img/earth.jpg');
-    var material = new THREE.MeshBasicMaterial({ map:texture });
+    var material = new THREE.MeshLambertMaterial({ map:texture, overdraw:true, });
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.receiveShadow = true;
 }
@@ -95,7 +95,7 @@ Moon = function (radius) {
 
     //добавление текстуры
     var texture = new THREE.TextureLoader().load('static/img/moon.jpg');
-    var material = new THREE.MeshBasicMaterial({ map:texture });
+    var material = new THREE.MeshLambertMaterial({ map:texture, overdraw:true, });
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.receiveShadow = true;
 }
@@ -110,12 +110,29 @@ function createPlanet(radius) {
 function createMoon(radius) {
     moon = new Moon(radius);
     scene.add(moon.mesh);
-    moon.mesh.position.x += 50;
+    moon.mesh.position.x += 25;
 }
+
+var rotateAroundWorldAxis = function(object, axis, radians) {
+    var rotWorldMatrix = new THREE.Matrix4();
+    rotWorldMatrix.makeRotationAxis(axis.normalize(), radians);
+
+    var currentPos = new THREE.Vector4(object.position.x, object.position.y, object.position.z, 1);
+    var newPos = currentPos.applyMatrix4(rotWorldMatrix);
+
+    rotWorldMatrix.multiply(object.matrix);
+    object.matrix = rotWorldMatrix;
+    object.rotation.setFromRotationMatrix(object.matrix);
+
+    object.position.x = newPos.x;
+    object.position.y = newPos.y;
+    object.position.z = newPos.z;
+};
 
 function loop() {
     planet.mesh.rotation.y += .005;
     moon.mesh.rotation.y -= .01;
+    rotateAroundWorldAxis(moon.mesh, new THREE.Vector3(0,1,0), Math.PI/360);
     // moon.mesh.position.x -= 1;
     renderer.render(scene, camera);
     requestAnimationFrame(loop);
