@@ -2,13 +2,12 @@ var scene, controls,
     camera, fieldOfView, aspectRatio, nearPlane, farPlane,
     renderer, container;
 
-var HEIGHT, WIDTH;
-
-//создаем сцену
+var HEIGHT = window.innerHeight-20,
+    WIDTH = window.innerWidth-20;
 
 function createScene() {
-    HEIGHT = window.innerHeight-20;
-    WIDTH = window.innerWidth-20;
+
+//создаем сцену
 
     scene = new THREE.Scene();
     aspectRatio = WIDTH/HEIGHT;
@@ -83,22 +82,41 @@ Planet = function (radius) {
     var geometry = new THREE.SphereGeometry(radius, 32, 32);
     // var material = new THREE.MeshLambertMaterial(
     //      {color: 0x7777ff});
+
+    //добавление текстуры
     var texture = new THREE.TextureLoader().load('static/img/earth.jpg');
     var material = new THREE.MeshBasicMaterial({ map:texture });
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.receiveShadow = true;
 }
 
-var planet;
+Moon = function (radius) {
+    var geometry = new THREE.SphereGeometry(radius, 32, 32);
+
+    //добавление текстуры
+    var texture = new THREE.TextureLoader().load('static/img/moon.jpg');
+    var material = new THREE.MeshBasicMaterial({ map:texture });
+    this.mesh = new THREE.Mesh(geometry, material);
+    this.mesh.receiveShadow = true;
+}
+
+var planet, moon;
 
 function createPlanet(radius) {
     planet = new Planet(radius);
     scene.add(planet.mesh);
 }
 
+function createMoon(radius) {
+    moon = new Moon(radius);
+    scene.add(moon.mesh);
+    moon.mesh.position.x += 50;
+}
+
 function loop() {
     planet.mesh.rotation.y += .005;
-
+    moon.mesh.rotation.y -= .01;
+    // moon.mesh.position.x -= 1;
     renderer.render(scene, camera);
     requestAnimationFrame(loop);
 }
@@ -107,6 +125,7 @@ function init() {
     createScene();
     createLights();
     createPlanet(10);
+    createMoon(4);
     loop();
 }
 
