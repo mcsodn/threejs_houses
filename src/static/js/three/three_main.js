@@ -61,9 +61,9 @@ function handleWindowResize() {
 
 //добавляем свет
 
-var spotLight;
-
 function createLights() {
+
+    var spotLight;
     spotLight = new THREE.SpotLight(0xffffff);
     spotLight.position.set( -40, 60, -10 );
     spotLight.castShadow = true;
@@ -110,8 +110,10 @@ function createPlanet(radius) {
 function createMoon(radius) {
     moon = new Moon(radius);
     scene.add(moon.mesh);
-    moon.mesh.position.x += 25;
+    moon.mesh.position.x += 40;
 }
+
+//вращение вокруг глобальных осей
 
 var rotateAroundWorldAxis = function(object, axis, radians) {
     var rotWorldMatrix = new THREE.Matrix4();
