@@ -24,9 +24,9 @@ $(function () {
             farPlane
         );
 
-        camera.position.x = -30;
-        camera.position.y = 40;
-        camera.position.z = 30;
+        camera.position.x = -30*10;
+        camera.position.y = 40*10;
+        camera.position.z = 30*10;
         camera.lookAt(scene.position);
         renderer = new THREE.WebGLRenderer({
             alpha: true,
@@ -66,8 +66,8 @@ $(function () {
     function createLights() {
 
         let spotLight;
-        spotLight = new THREE.SpotLight(0xffffff);
-        spotLight.position.set( -40, 60, -10 );
+        spotLight = new THREE.DirectionalLight(0xffffff, 0.75);
+        spotLight.position.set( 100, 100, 100 ).normalize();
         spotLight.castShadow = true;
 
         spotLight.shadow.mapSize.width = 512*4;
@@ -79,40 +79,38 @@ $(function () {
         scene.add(spotLight);
     }
 
-
-    Planet = function (radius) {
-        let geometry = new THREE.SphereGeometry(radius, 32, 32);
-        // var material = new THREE.MeshLambertMaterial(
-        //      {color: 0x7777ff});
+    Section = function() {
+        let geometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
 
         //добавление текстуры
-        let texture = new THREE.TextureLoader().load('static/img/earth.jpg');
-        let material = new THREE.MeshLambertMaterial({ map:texture, overdraw:true, });
+        let material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, overdraw:true, });
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.receiveShadow = true;
     }
 
-    Moon = function (radius) {
-        let geometry = new THREE.SphereGeometry(radius, 32, 32);
+    let section;
 
-        //добавление текстуры
-        let texture = new THREE.TextureLoader().load('static/img/moon.jpg');
-        let material = new THREE.MeshLambertMaterial({ map:texture, overdraw:true, });
-        this.mesh = new THREE.Mesh(geometry, material);
-        this.mesh.receiveShadow = true;
-    }
+    function createSection() {
 
-    let planet, moon;
+        for (let i = 0; i < 500; i++) {
 
-    function createPlanet(radius) {
-        planet = new Planet(radius);
-        scene.add(planet.mesh);
-    }
+            section = new Section();
 
-    function createMoon(radius) {
-        moon = new Moon(radius);
-        scene.add(moon.mesh);
-        moon.mesh.position.x += 40;
+            section.mesh.position.x = Math.random() * 800 - 400;
+            section.mesh.position.y = Math.random() * 800 - 400;
+            section.mesh.position.z = Math.random() * 800 - 400;
+
+            section.mesh.rotation.x = Math.random() * 2 * Math.PI;
+            section.mesh.rotation.y = Math.random() * 2 * Math.PI;
+            section.mesh.rotation.z = Math.random() * 2 * Math.PI;
+
+            // section.mesh.scale.x = Math.random() + 0.5;
+            // section.mesh.scale.y = Math.random() + 0.5;
+            // section.mesh.scale.z = Math.random() + 0.5;
+
+            scene.add(section.mesh);
+
+        }
     }
 
     //вращение вокруг глобальных осей
@@ -134,10 +132,6 @@ $(function () {
     };
 
     function loop() {
-        planet.mesh.rotation.y += .005;
-        moon.mesh.rotation.y -= .01;
-        rotateAroundWorldAxis(moon.mesh, new THREE.Vector3(0,1,0), Math.PI/360);
-        // moon.mesh.position.x -= 1;
         renderer.render(scene, camera);
         requestAnimationFrame(loop);
     }
@@ -145,8 +139,8 @@ $(function () {
     function init() {
         createScene();
         createLights();
-        createPlanet(10);
-        createMoon(4);
+        createSection();
+
         loop();
     }
 
