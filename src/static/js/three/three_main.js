@@ -7,7 +7,7 @@ $(function () {
     let HEIGHT = window.innerHeight,
         WIDTH = window.innerWidth;
 
-    let basicColor = Math.random() * 0xffffff;
+    let basicColor = Math.random() * 0xffffff; // рандомный цвет
 
 
     //функция создания сцены и камеры, тут же добавляются оси и управление мышью, а потом выводится в контейнер
@@ -86,7 +86,7 @@ $(function () {
 
     //функция создания секции
     Section = function() {
-        let geometry = new THREE.BoxBufferGeometry( 120, 100, 120 );
+        let geometry = new THREE.BoxBufferGeometry( 120, 100, 120 ); // простой куб 120 на 120 высотой 100
 
         //добавление простого материала рандомного цвета
         let material = new THREE.MeshLambertMaterial({ color:basicColor, overdraw:true, });
@@ -97,16 +97,18 @@ $(function () {
     //функция создания крыши
     Roof = function () {
 
-        let x,y;
+        let x,y; //стартовые координаты крыши
         x = -65;
-        y = 52;
+        y = 52; //50+2 пикселя от бокса до крыши
 
+        //создаем плоский шейп-треугольник
         let triangleShape = new THREE.Shape();
         triangleShape.moveTo( x, y );
         triangleShape.lineTo( x, y+65 );
         triangleShape.lineTo( x+130, y );
         triangleShape.lineTo( x, y ); // close path
 
+        // задаем ему объем по оси Z, глубина 130
         let extrudeSettings = { depth: 130, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 1, bevelThickness: 1 };
         let geometry = new THREE.ExtrudeGeometry(triangleShape, extrudeSettings);
 
@@ -114,7 +116,6 @@ $(function () {
         let material = new THREE.MeshLambertMaterial({ color:basicColor, overdraw:true, });
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.receiveShadow = true;
-        // this.mesh.rotation.x = -.5*Math.PI;
         this.mesh.position.z -= 65;
     }
 
@@ -132,7 +133,7 @@ $(function () {
 
 
     function addSection() {
-        basicColor = Math.random() * 0xffffff;
+        basicColor = Math.random() * 0xffffff; //обновляем цвет
         createSection();
 
         // section.mesh.position.x = Math.random() * 800 - 400;
@@ -174,6 +175,6 @@ $(function () {
         loop();
     }
 
-    window.addEventListener('load', init, false);
-    document.getElementById('addsection').addEventListener('click', addSection, false);
+    window.addEventListener('load', init, false); // init при загрузке
+    document.getElementById('addsection').addEventListener('click', addSection, false); // добавляем секцию при клике
 })
