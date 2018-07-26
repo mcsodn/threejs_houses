@@ -7,6 +7,10 @@ $(function () {
     let HEIGHT = window.innerHeight,
         WIDTH = window.innerWidth;
 
+    let basicColor = Math.random() * 0xffffff;
+
+
+    //функция создания сцены и камеры, тут же добавляются оси и управление мышью, а потом выводится в контейнер
     function createScene() {
 
     //создаем сцену
@@ -52,7 +56,6 @@ $(function () {
     }
 
     //функция перерисовывает сцену, если изменились размеры окна
-
     function handleWindowResize() {
         HEIGHT = window.innerHeight;
         WIDTH = window.innerWidth;
@@ -61,11 +64,10 @@ $(function () {
         camera.updateProjectionMatrix();
     }
 
-    //добавляем свет
-
+    //добавляем свет на сцену
     function createLights() {
 
-        let spotLight;
+        let spotLight, sphereLight;
         spotLight = new THREE.DirectionalLight(0xffffff, 0.75);
         spotLight.position.set( 100, 100, 100 ).normalize();
         spotLight.castShadow = true;
@@ -77,40 +79,69 @@ $(function () {
         spotLight.shadow.bias = -0.01;
 
         scene.add(spotLight);
+
+        sphereLight = new THREE.HemisphereLight(0xaaaaaa,0x000000,.9);
+        scene.add(sphereLight);
     }
 
+    //функция создания секции
     Section = function() {
-        let geometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
+        let geometry = new THREE.BoxBufferGeometry( 120, 100, 120 );
 
-        //добавление текстуры
-        let material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, overdraw:true, });
+        //добавление простого материала рандомного цвета
+        let material = new THREE.MeshLambertMaterial({ color:basicColor, overdraw:true, });
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.receiveShadow = true;
     }
 
-    let section;
+    //функция создания крыши
+    Roof = function () {
 
+        let x,y;
+        x = -65;
+        y = 52;
+
+        let triangleShape = new THREE.Shape();
+        triangleShape.moveTo( x, y );
+        triangleShape.lineTo( x, y+65 );
+        triangleShape.lineTo( x+130, y );
+        triangleShape.lineTo( x, y ); // close path
+
+        let extrudeSettings = { depth: 130, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 1, bevelThickness: 1 };
+        let geometry = new THREE.ExtrudeGeometry(triangleShape, extrudeSettings);
+
+        //добавление простого материала рандомного цвета
+        let material = new THREE.MeshLambertMaterial({ color:basicColor, overdraw:true, });
+        this.mesh = new THREE.Mesh(geometry, material);
+        this.mesh.receiveShadow = true;
+        // this.mesh.rotation.x = -.5*Math.PI;
+        this.mesh.position.z -= 65;
+    }
+
+    //функция вывода секции на сцену
     function createSection() {
 
-        for (let i = 0; i < 500; i++) {
+        let section, roof;
 
-            section = new Section();
+        section = new Section();
+        roof = new Roof();
 
-            section.mesh.position.x = Math.random() * 800 - 400;
-            section.mesh.position.y = Math.random() * 800 - 400;
-            section.mesh.position.z = Math.random() * 800 - 400;
+        scene.add(section.mesh);
+        scene.add(roof.mesh);
+    }
 
-            section.mesh.rotation.x = Math.random() * 2 * Math.PI;
-            section.mesh.rotation.y = Math.random() * 2 * Math.PI;
-            section.mesh.rotation.z = Math.random() * 2 * Math.PI;
 
-            // section.mesh.scale.x = Math.random() + 0.5;
-            // section.mesh.scale.y = Math.random() + 0.5;
-            // section.mesh.scale.z = Math.random() + 0.5;
+    function addSection() {
+        basicColor = Math.random() * 0xffffff;
+        createSection();
 
-            scene.add(section.mesh);
-
-        }
+        // section.mesh.position.x = Math.random() * 800 - 400;
+        // section.mesh.position.y = Math.random() * 800 - 400;
+        // section.mesh.position.z = Math.random() * 800 - 400;
+        //
+        // section.mesh.rotation.x = Math.random() * 2 * Math.PI;
+        // section.mesh.rotation.y = Math.random() * 2 * Math.PI;
+        // section.mesh.rotation.z = Math.random() * 2 * Math.PI;
     }
 
     //вращение вокруг глобальных осей
@@ -140,10 +171,9 @@ $(function () {
         createScene();
         createLights();
         createSection();
-
         loop();
     }
 
     window.addEventListener('load', init, false);
-
+    document.getElementById('addsection').addEventListener('click', addSection, false);
 })
