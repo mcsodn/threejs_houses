@@ -9,6 +9,10 @@ $(function () {
 
     let basicColor = Math.random() * 0xffffff; // рандомный цвет
 
+    let SECTION_HEIGHT = 100,
+        SECTION_LENGTH = 200,
+        SECTION_WIDTH = 120;
+
 
     //функция создания сцены и камеры, тут же добавляются оси и управление мышью, а потом выводится в контейнер
     function createScene() {
@@ -84,84 +88,78 @@ $(function () {
         scene.add(sphereLight);
     }
 
-    //функция создания секции
-    Section = function() {
-        let geometry = new THREE.BoxBufferGeometry( 120, 100, 120 ); // простой куб 120 на 120 высотой 100
+    //функция создания стен
+    Walls = function() {
+        let geometry = new THREE.BoxBufferGeometry( SECTION_LENGTH, SECTION_HEIGHT, SECTION_WIDTH ); // простой куб SECTION_LENGTH на SECTION_HEIGHT высотой SECTION_HEIGHT
 
         //добавление простого материала рандомного цвета
         let material = new THREE.MeshLambertMaterial({ color:basicColor, overdraw:true, });
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.receiveShadow = true;
+
+        this.mesh.position.x += SECTION_LENGTH/2;
+        this.mesh.position.y += SECTION_HEIGHT/2;
+        this.mesh.position.z += SECTION_WIDTH/2;
     }
 
     //функция создания крыши
     Roof = function () {
 
-        let x,y; //стартовые координаты крыши
-        x = -65;
-        y = 52; //50+2 пикселя от бокса до крыши
+        let x,y,ROOF_HEIGHT; //стартовые координаты крыши и шаг
+        ROOF_HEIGHT = 55;
+        x = 0;
+        y = SECTION_HEIGHT-1;
 
         //создаем плоский шейп-треугольник
         let triangleShape = new THREE.Shape();
         triangleShape.moveTo( x, y );
-        triangleShape.lineTo( x, y+65 );
-        triangleShape.lineTo( x+130, y );
+        triangleShape.lineTo( x, y+ROOF_HEIGHT ); // вверх
+        triangleShape.lineTo( x+SECTION_LENGTH+5, y ); //вниз и в сторону
         triangleShape.lineTo( x, y ); // close path
 
-        // задаем ему объем по оси Z, глубина 130
-        let extrudeSettings = { depth: 130, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 1, bevelThickness: 1 };
+        // задаем ему объем по оси Z
+        let extrudeSettings = {
+            depth: SECTION_WIDTH,
+            bevelEnabled: false,
+            bevelSegments: 2,
+            steps: 2,
+            bevelSize: 1,
+            bevelThickness: 1 };
+
         let geometry = new THREE.ExtrudeGeometry(triangleShape, extrudeSettings);
 
         //добавление простого материала рандомного цвета
         let material = new THREE.MeshLambertMaterial({ color:basicColor, overdraw:true, });
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.receiveShadow = true;
-        this.mesh.position.z -= 65;
+        // this.mesh.position.z -= roofStep/2;
     }
 
     //функция вывода секции на сцену
     function createSection() {
 
-        let section, roof;
+        let walls, roof, plane;
 
-        section = new Section();
+        walls = new Walls();
         roof = new Roof();
 
-        scene.add(section.mesh);
+        scene.add(walls.mesh);
         scene.add(roof.mesh);
+
+        let planeGeometry = new THREE.PlaneGeometry(SECTION_LENGTH*3,SECTION_WIDTH*3);
+        let planeMaterial = new THREE.MeshBasicMaterial(
+            {color: 0xcccccc});
+        plane = new THREE.Mesh(planeGeometry,planeMaterial);
+        plane.rotation.x = -0.5*Math.PI;
+
+        scene.add(plane);
     }
 
 
     function addSection() {
         basicColor = Math.random() * 0xffffff; //обновляем цвет
         createSection();
-
-        // section.mesh.position.x = Math.random() * 800 - 400;
-        // section.mesh.position.y = Math.random() * 800 - 400;
-        // section.mesh.position.z = Math.random() * 800 - 400;
-        //
-        // section.mesh.rotation.x = Math.random() * 2 * Math.PI;
-        // section.mesh.rotation.y = Math.random() * 2 * Math.PI;
-        // section.mesh.rotation.z = Math.random() * 2 * Math.PI;
     }
-
-    //вращение вокруг глобальных осей
-
-    let rotateAroundWorldAxis = function(object, axis, radians) {
-        let rotWorldMatrix = new THREE.Matrix4();
-        rotWorldMatrix.makeRotationAxis(axis.normalize(), radians);
-
-        let currentPos = new THREE.Vector4(object.position.x, object.position.y, object.position.z, 1);
-        let newPos = currentPos.applyMatrix4(rotWorldMatrix);
-
-        rotWorldMatrix.multiply(object.matrix);
-        object.matrix = rotWorldMatrix;
-        object.rotation.setFromRotationMatrix(object.matrix);
-
-        object.position.x = newPos.x;
-        object.position.y = newPos.y;
-        object.position.z = newPos.z;
-    };
 
     function loop() {
         renderer.render(scene, camera);
